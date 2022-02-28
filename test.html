@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./test.css">
+    <title>Document</title>
+</head>
+<body>
+    <div class="modal-input-wrapper">
+
+        <input type="text" placeholder="Axtarış edin..." class="modal-input" />
+        <table class="table-data">
+          <tbody>
+            <tr>
+              <td>
+                <a class="product-link" href="">
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit.</a></td>
+            </tr>
+            <tr>
+              <td>
+                <a class="product-link" href="">
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit.</a></td>
+            </tr>
+          </tbody>
+        </table>
+        </div>
+  
+    <script>
+       const inputv = document.querySelector(".modal-input");
+let container = document.querySelector(".table-data tbody");
+
+let letters = /^[A-Za-z]+$/;
+inputv.addEventListener("keyup", (e) => {
+  container.innerHTML = "";
+  const inputField = inputv.value;
+  const string = inputField.replace(/\s\s+/g, " ");
+  const regEx = new RegExp(string, "i");
+  const xhr = new XMLHttpRequest();
+
+  xhr.open("GET", `https://avanqardups.az/search?string=${string}`);
+  xhr.onload = function () {
+    if (this.status === 200) {
+      const responseTxt = JSON.parse(this.responseText);
+      container.innerHTML = ""; // Clear container before each response
+      responseTxt.map(function (element) {
+        const detailsName = element.Name.split(" ").join("_");
+        const detailsUrl = `https://avanqardups.az/product?productName=${detailsName}`;
+        if (element.Name.search(regEx) != -1) {
+          container.parentElement.classList.add("active");
+          container.innerHTML += `
+            <tr class="product-tr"> 
+               <td class="product-link"><a class="product-link-color" href=${detailsUrl}> ${element.Name}</a> </td>
+              </tr>
+                  `;
+        }
+        if (inputv.value == "") {
+          container.classList.remove("active");
+        } if(element.Name.search(regEx)==-1) {
+          console.log("h");
+        }
+      });
+    }
+  };
+  xhr.send();
+});
+    </script>
+</body>
+</html>
